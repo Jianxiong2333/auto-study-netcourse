@@ -1,0 +1,21 @@
+http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html
+
+Blocked a frame with origin from accessing a cross-origin frame.
+
+window.frames["w_sco"].document.querySelectorAll(".chapter span");
+
+document.querySelector("#btnNext").click();
+
+window.top.w_main.w_code.document.querySelector("#btnNext")
+
+window.top.w_main.w_lms_content.w_sco.w_content.w_sco.document.querySelectorAll(".chapter span")
+window.top.w_main.w_lms_content.w_sco.w_content.w_sco.frameElement.contentDocument.querySelectorAll(".chapter span")
+
+window.addEventListener('message', function(e) {
+  console.log(e.data);
+},false);
+
+https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=windows%20chrome%20%E5%BC%80%E5%8F%91%E8%80%85%E5%B7%A5%E5%85%B7%20%E8%B7%A8%E5%9F%9F&oq=chrome%2520%25E5%25BC%2580%25E5%258F%2591%25E8%2580%2585%25E5%25B7%25A5%25E5%2585%25B7%2520%25E8%25B7%25A8%25E5%259F%259F&rsv_pq=b3e35fef0004efd6&rsv_t=35faI0xP3%2B1yNta0BtvG1coHja1VhQrpP0too6XZ4rZx2mv59pLjAiPc6AM&rqlang=cn&rsv_enter=1&rsv_dl=tb&inputT=3185&rsv_sug3=267&rsv_sug1=90&rsv_sug7=000&rsv_sug2=0&prefixsug=windows%2520chrome%2520%25E5%25BC%2580%25E5%258F%2591%25E8%2580%2585%25E5%25B7%25A5%25E5%2585%25B7%2520%25E8%25B7%25A8%25E5%259F%259F&rsp=0&rsv_sug4=4280&rsv_sug=1
+
+https://www.cnblogs.com/cshi/p/5660039.html
+https://blog.csdn.net/qq_36658051/article/details/85112560
