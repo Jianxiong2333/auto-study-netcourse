@@ -56,7 +56,7 @@ function getAuthorizedIds() {
 /**获取当前登录学员的学号 */
 function getLoginId() {
     let id = window.top.w_top.document.querySelector(".fnt_title").innerText;
-    id = $.trim(id.substring(0, id.indexOf('(')));
+    id = id.substring(0, id.indexOf('(')).trim();
     console.info("当前登录学号为：", id);
     return id;
 }
