@@ -1,5 +1,7 @@
 /**输出占位符内容 */
-let place_holder_str = '----------------------------------------------------------------';
+if (!window.place_holder_str) {
+    place_holder_str = '----------------------------------------------------------------';
+}
 
 /**获取答案 */
 function getAnswers() {
@@ -21,10 +23,10 @@ function getAnswers() {
     answers = answers.filter(Boolean);
     // console.info(answers)
 
-    //将旧数组按每6个一组拆分为一个新数组，每6个一组为一道试题
+    //将旧数组按每9个一组拆分为一个新数组，每9个一组为一道试题
     let new_answers = [];
-    for (let i = 0; i < answers.length; i += 6) {
-        new_answers.push(answers.slice(i, i + 6));
+    for (let i = 0; i < answers.length; i += 9) {
+        new_answers.push(answers.slice(i, i + 9));
     }
     // console.info(new_answers)
 
@@ -33,39 +35,33 @@ function getAnswers() {
         //当前试题
         let question = new_answers[i];
         //当前试题的答案，A/B/C/D
-        let q_answer = question[3].substring(6, 7);
+        let q_answer = question[6].substring(6, 7);
 
         //记录当前试题答案选项
         question.push(q_answer);
 
-        //答案为D时，为最后一个答案，截取从(D)开始的字符串，+4代表去除选项字样
-        if (q_answer != 'D') {
-            question.push(replace_space(question[2].substring(question[2].indexOf(`(${q_answer})`) + 4, question[2].indexOf(`(${getNextAnswerSign(q_answer)})`))));
-        }
-        //答案为A/B/C时，截取从(A/B/C)开始到下一个答案前的字符串
-        else {
-            question.push(replace_space(question[2].substring(question[2].indexOf(`(${q_answer})`) + 4, question[2].length)));
-        }
+        let answer_sign_index = 2 + getAnswerSignIndex(q_answer);
+
+        question.push(question[answer_sign_index].substring(question[answer_sign_index].indexOf(`	(${q_answer}) `) + 5, question[answer_sign_index].length).trim());
 
         //输出试题及答案内容
         console.info(question[0], question[1]);
-        console.info("答案：", question[6], '.', question[7]);
+        console.info("答案：", question[9], '.', question[10]);
         console.info(place_holder_str);
     }
     console.info('答案处理完毕，存入缓存...');
 
-    localStorage.setItem("loca-question-answer", JSON.stringify(new_answers));
+    localStorage.setItem("local-question-answer", JSON.stringify(new_answers));
     console.info('存入缓存成功，请在新标签页进行<重考>，并执行 <自动完成作业> 脚本 ...');
     console.info(place_holder_str);
-
-    //去除空白字符
-    function replace_space(str) {
-        return str.replace(/\s*/g, "");
-    }
 }
 //答案转ASCII，并返回下一选项，用于试题答案内容获取
 function getNextAnswerSign(text) {
     return String.fromCharCode(text.charCodeAt() + 1);
+}
+//获取答案标志索引
+function getAnswerSignIndex(text) {
+    return text.charCodeAt() - 65;
 }
 
 /**初始化 */
