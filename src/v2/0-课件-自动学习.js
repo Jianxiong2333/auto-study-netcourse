@@ -3,29 +3,52 @@ if (!window.place_holder_str) {
     place_holder_str = '----------------------------------------------------------------';
 }
 
-/**配置：自动启动延时 */
-let config_init_time = 2 * 1000;
-
 /**配置：自动检测完成状态轮询时长 */
-let config_check_complete_time = 10 * 1000;
+let config_check_complete_time = 15 * 1000;
 
 /**配置：切换页码间隔基础时长 */
 let config_switch_page_base_time = 1 * 1000;
 
-//控制台先引入JQuery，并启动自动刷课任务
-; (function (d, s) {
-    d.body.appendChild(s = d.createElement('script')).src = 'http://code.jquery.com/jquery-1.9.1.min.js';
+/**配置：控制翻页函数每个课件的执行次数 */
+let config_switch_page_btn_call_count = 3,
+    //当前课件翻页函数执行次数
+    curr_switch_page_btn_call_count = 3;
 
+//控制台先引入JQuery，并启动自动刷课任务
+; (function (document) {
+    let script = document.createElement('script');
+    if (script.readyState) {
+        // IE
+        script.onreadystatechange = function () {
+            if (script.readyState === 'loaded' || script.readyState === 'complete') {
+                script.onreadystatechange = null;
+                callback();
+            }
+        }
+    } else {
+        // 其他浏览器
+        script.onload = function () {
+            callback();
+        }
+    }
+    script.src = 'http://code.jquery.com/jquery-1.9.1.min.js';
+    document.body.appendChild(script);
+
+    //开始提示文字输出
     console.clear();
     console.info(place_holder_str);
-    console.info("即将进行授权检测并自动播放课件...");
+    console.info("正在加载JQuery，请等待加载完成...");
     console.info(`请注意以下事项：
     1、保证浏览器已关闭同源策略
     2、网课平台正常登录有效
-    3、已进入到课件播放页面(课件目录页不支持)
-    `)
+    3、已进入到课件播放页面(课件目录页不支持)`);
     console.info(place_holder_str);
-    setTimeout(init, config_init_time);
+
+    function callback() {
+        console.log("JQuery加载完成，即将进行授权检测并自动播放课件...");
+        console.info(place_holder_str);
+        init();//初始化
+    }
 })(document);
 
 /**
@@ -97,7 +120,7 @@ function getPageBtns() {
 
     if (btns) {
         if (btns.length > 1) {
-            console.log("本课件有 " + btns.length + " 页，将进行翻页...");
+            console.log("本课件有 " + btns.length + " 页，将进行第[" + (config_switch_page_btn_call_count - curr_switch_page_btn_call_count) + "次]翻页...");
         } else {
             console.log("本课件仅 " + btns.length + " 页，无需翻页...");
         }
@@ -115,8 +138,9 @@ function nextCourseWare() {
 
     if (btn_next) {
         console.log(place_holder_str);
-        console.log("播放下一个课件...");
+        console.log("切换下一个课件...");
         btn_next.click();//切换课件
+        curr_switch_page_btn_call_count = config_switch_page_btn_call_count;//重置翻页函数执行次数限制
     } else {
         console.error("找不到 <下一个> 按钮...");
     }
@@ -131,11 +155,23 @@ function switchPageBtn() {
                 console.log("第 " + i + " 页");
                 btns[i - 1].click();
                 if (i == btns.length) {
-                    console.log("翻页完成，等待切换下一个课件...");
+                    console.log("本次翻页完成，剩余[" + curr_switch_page_btn_call_count + "次]，等待课件完成后切换下一个课件...");
                 }
             }, i * config_switch_page_base_time);
         }
     }
+}
+/**控制函数执行次数 */
+function setFunCallMaxTimes(fun, nextFun) {
+    return function () {
+        if (curr_switch_page_btn_call_count-- > 0) {
+            // 执行函数
+            return fun.apply(this);
+        } else if (nextFun && typeof nextFun === 'function') {
+            // 执行下一个函数
+            return nextFun.apply(this);
+        }
+    };
 }
 
 /**启动 */
@@ -147,7 +183,9 @@ function start() {
         }
         //课件未完成，则执行翻页
         else {
-            switchPageBtn();
+            setFunCallMaxTimes(switchPageBtn, function () {
+                console.log("当前课件翻页次数已达上限[" + config_switch_page_btn_call_count + "次]，不再翻页...");
+            })();
         }
     }, config_check_complete_time)
 }
