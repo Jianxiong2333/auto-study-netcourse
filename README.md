@@ -6,6 +6,9 @@
  1）刷课时原理：获取页面上的切换课件按钮以及翻页按钮，定时检测是否已完成并点击。  
  2）作业提交原理：：先进行`初考`，默认选中每题的第一个选项并交卷，有考试记录后，`查看考卷`即可`获取试题及其答案`，此时写入`浏览器缓存`，`重考`时即可读取缓存比对试题及答案，选中正确的选项。  
  3）网课平台学习界面，各模块嵌套了很多层iframe，且跨域，要实现自动刷课时及完成作业，必须先关闭浏览器同源策略，详细步骤请参照下列说明。  
+ 4）GitHub说明页地址：https://swzyt.github.io/auto-study-netcourse  
+ 5）GitHub源代码地址：https://github.com/swzyt/auto-study-netcourse  
+ 6）码云源代码地址：https://gitee.com/suwei.me/auto-study-netcourse
 
 ## 1、关闭浏览器同源策略
  0）参考操作：https://www.cnblogs.com/cshi/p/5660039.html  
